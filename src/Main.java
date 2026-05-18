@@ -3,50 +3,58 @@ import java.util.List;
 import model.Alarm;
 import model.AlarmManager;
 import model.SoundProfile;
+import model.MathChallenge;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("=== SIMULADOR DE DESPERTADOR INTELIGENTE ===");
+        System.out.println("=== SIMULADOR DE DESPERTADOR INTELIGENTE AVANZADO ===");
 
-        // 1. Creamos el cerebro del despertador
         AlarmManager manager = new AlarmManager();
+        SoundProfile tono = new SoundProfile("Alarma Fuerte", 90);
 
-        // 2. Creamos un perfil de sonido
-        SoundProfile despertadorSuave = new SoundProfile("Sonido Naturaleza", 80);
+        // Alarma Normal (Sin reto)
+        Alarm alarmaNormal = new Alarm("1", LocalTime.of(8, 0), "Sacar al perro", tono);
+        
+        // Alarma Avanzada (Con reto matemático para despertarse sí o sí)
+        MathChallenge retoEstudio = new MathChallenge();
+        Alarm alarmaReto = new Alarm("2", LocalTime.of(8, 2), "Estudiar para Examen", tono, retoEstudio);
 
-        // 3. Creamos un par de alarmas de prueba
-        // Alarma 1: Para ir a clase a las 07:30
-        Alarm alarmaClase = new Alarm("1", LocalTime.of(7, 30), "Ir a la UCAM", despertadorSuave);
-        // Alarma 2: Para el gimnasio a las 07:32
-        Alarm alarmaGym = new Alarm("2", LocalTime.of(7, 32), "Entrenamiento", despertadorSuave);
+        manager.addAlarm(alarmaNormal);
+        manager.addAlarm(alarmaReto);
 
-        // 4. Añadimos las alarmas al administrador
-        manager.addAlarm(alarmaClase);
-        manager.addAlarm(alarmaGym);
-
-        System.out.println("Alarmas configuradas con exito.");
-        System.out.println("Numero de alarmas activas: " + manager.getActiveAlarms().size());
-        System.out.println("------------------------------------------------");
-
-        // 5. SIMULACIÓN DEL TIEMPO: Vamos a simular que el reloj avanza minuto a minuto
-        // Empezamos a las 07:29 y avanzamos hasta las 07:33
-        LocalTime tiempoSimulado = LocalTime.of(7, 29);
+        // Simulamos el tiempo desde las 07:59 hasta las 08:03
+        LocalTime tiempoSimulado = LocalTime.of(7, 59);
 
         for (int i = 0; i <= 4; i++) {
             System.out.println("[Reloj Sistema] Hora actual: " + tiempoSimulado);
-
-            // El administrador comprueba si alguna alarma debe sonar a esta hora exacta
             List<Alarm> alarmasSonando = manager.checkAlarms(tiempoSimulado);
 
             if (!alarmasSonando.isEmpty()) {
                 for (Alarm a : alarmasSonando) {
-                    System.out.println(" -> !!! PI-PI-PI !!! Alarma [" + a.getLabel() 
-                        + "] sonando con tono '" + a.getSoundProfile().getToneName() 
-                        + "' al volumen " + a.getSoundProfile().getVolume() + "%!");
+                    System.out.println(" -> !!! PI-PI-PI !!! Alarma [" + a.getLabel() + "] ACTIVADA");
+
+                    // Comprobamos si la alarma tiene un reto matemático asociado
+                    if (a.getMathChallenge() != null) {
+                        System.out.println("    [RETO INTELIGENTE DETECTADO]: " + a.getMathChallenge().getQuestion());
+                        
+                        // Simulamos un intento de respuesta fallido primero
+                        int respuestaIncorrecta = 99;
+                        System.out.println("    Usuario introduce: " + respuestaIncorrecta);
+                        if (a.getMathChallenge().verifyAnswer(respuestaIncorrecta)) {
+                            System.out.println("    -> Reto superado. Alarma apagada.");
+                        } else {
+                            System.out.println("    -> ERROR: Respuesta incorrecta. ¡La alarma NO se detiene y sigue sonando!");
+                        }
+                        
+                        // En la vida real el usuario seguiría intentándolo. Simulamos la respuesta correcta para apagarla:
+                        // Como no conocemos los números aleatorios que han salido, usamos un truco de simulación para forzar el acierto:
+                        System.out.println("    Usuario se despeja e introduce la respuesta correcta...");
+                        System.out.println("    -> ¡Reto superado con exito! Alarma desactivada correctamente.");
+                    } else {
+                        System.out.println("    (Esta alarma no requiere reto. Se apaga con un toque normal).");
+                    }
                 }
             }
-
-            // Avanzamos el reloj un minuto para la siguiente iteración
             tiempoSimulado = tiempoSimulado.plusMinutes(1);
             System.out.println("------------------------------------------------");
         }

@@ -8,6 +8,7 @@ public class Alarm {
     private String label;
     private boolean active;
     private SoundProfile soundProfile; // Una alarma TIENE un sonido asignado
+    private MathChallenge mathChallenge; // Opcional: Puede tener un reto o no (null)
 
     public Alarm(String id, LocalTime time, String label, SoundProfile soundProfile) {
         if (time == null) {
@@ -30,4 +31,10 @@ public class Alarm {
     public void setActive(boolean active) { this.active = active; }
     public SoundProfile getSoundProfile() { return soundProfile; }
     public void setSoundProfile(SoundProfile soundProfile) { this.soundProfile = soundProfile; }
+    // Constructor para alarmas CON reto matemático
+public Alarm(String id, LocalTime time, String label, SoundProfile soundProfile, MathChallenge mathChallenge) {
+    this(id, time, label, soundProfile); // Llama al constructor que ya tenías arriba
+    this.mathChallenge = mathChallenge;
+}
+public MathChallenge getMathChallenge() { return mathChallenge; }
 }
