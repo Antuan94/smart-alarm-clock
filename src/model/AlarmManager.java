@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlarmManager {
-    // Atributo privado: una lista dinámica que guardará todas las alarmas creadas
+    // Atributos privados
     private List<Alarm> alarms;
+    private boolean vacationModeActive = false; // Control de modo vacaciones
+    private SleepStatistics statistics = new SleepStatistics(); // Control de estadísticas
 
-    // Constructor: Inicializa la lista vacía al crear el administrador
+    // Constructor
     public AlarmManager() {
         this.alarms = new ArrayList<>();
     }
@@ -21,7 +23,6 @@ public class AlarmManager {
 
     // REQUISITO OBLIGATORIO: Eliminar alarma mediante su ID
     public boolean removeAlarm(String id) {
-        // Busca en la lista y si encuentra el ID, la borra
         return this.alarms.removeIf(alarm -> alarm.getId().equals(id));
     }
 
@@ -36,11 +37,16 @@ public class AlarmManager {
         return activeList;
     }
 
-    // Método clave: Compara una hora dada (simulada) con las alarmas para saber cuál debe sonar
+    // Método clave: Compara la hora simulada aplicando la regla del Modo Vacaciones
     public List<Alarm> checkAlarms(LocalTime currentTime) {
         List<Alarm> triggeredAlarms = new ArrayList<>();
+        
+        // Si las vacaciones están activas, devolvemos la lista vacía inmediatamente (silencio total)
+        if (this.vacationModeActive) {
+            return triggeredAlarms;
+        }
+
         for (Alarm alarm : alarms) {
-            // Si la alarma está encendida y coincide exactamente con la hora actual
             if (alarm.isActive() && alarm.getTime().equals(currentTime)) {
                 triggeredAlarms.add(alarm);
             }
@@ -48,7 +54,19 @@ public class AlarmManager {
         return triggeredAlarms;
     }
 
-    // Getter para obtener todas las alarmas (útil para pruebas)
+    // Getters para las funciones avanzadas
+    public boolean isVacationModeActive() {
+        return vacationModeActive;
+    }
+
+    public void setVacationMode(boolean active) {
+        this.vacationModeActive = active;
+    }
+
+    public SleepStatistics getStatistics() {
+        return this.statistics;
+    }
+
     public List<Alarm> getAllAlarms() {
         return this.alarms;
     }
